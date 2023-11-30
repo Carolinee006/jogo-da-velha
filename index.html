@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="mystyle.css">
+    <meta  charset="UTF-8">
+    <meta  charset="UTF-8">
+    <meta name="viewport" content="width=device_width", initial-scale-1.0/>
+    <meta http-equiv="content-language" content="pt-br, en-US">
+    <meta name="googlebot" content="noarchive">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta name="author" content="Caroline Casagrande">
+    <meta name="keywords" content="XoXo Game, jogo, jogo da velha, jogador X e O, desafio"/>
+  <title>Jogo da Velha</title>
+</head>
+<header>
+  <div class="beijo">
+   <img src="img/93251-removebg-preview.png" alt="Imagem de um desenho de beijo da cor rosa pink."><a href="index.html"><h1>XOXO<strong>GAME</strong></h1></a> 
+</header>
+<body>
+  <div class="escolha">
+  <div id="choosePlayer">
+    <label for="playerSelect">ESCOLHA O JOGADOR:</label>
+    <select id="playerSelect">
+      <option value="X">O</option>
+      <option value="O">X</option>
+    </select>
+  </div>
+  </div>
+
+  <div id="board"></div>
+  <div class="message"></div>
+  <button id="restartButton" onclick="resetGame()">JOGAR NOVAMENTE</button>
+
+  <script>
+    const board = document.getElementById('board');
+    const playerSelect = document.getElementById('playerSelect');
+    const message = document.querySelector('.message');
+    const restartButton = document.getElementById('restartButton');
+
+    let currentPlayer = 'X';
+    let gameBoard = ['', '', '', '', '', '', '', '', ''];
+    let gameActive = true;
+
+    function initializeBoard() {
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = i;
+        cell.addEventListener('click', handleCellClick);
+        board.appendChild(cell);
+      }
+    }
+
+    function handleCellClick() {
+      if (!gameActive) return;
+
+      const index = parseInt(this.dataset.index);
+
+      if (gameBoard[index] === '') {
+        gameBoard[index] = currentPlayer;
+        this.textContent = currentPlayer;
+
+        if (checkWinner()) {
+          message.textContent = `Jogador ${currentPlayer} venceu!`;
+          markWinnerCells();
+          gameActive = false;
+          restartButton.style.display = 'block';
+        } else if (gameBoard.every(cell => cell !== '')) {
+          message.textContent = 'Empate!';
+          gameActive = false;
+          restartButton.style.display = 'block';
+        } else {
+          currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+          message.textContent = `É a vez do Jogador ${currentPlayer}`;
+        }
+      }
+    }
+
+    function checkWinner() {
+      const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Linhas
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colunas
+        [0, 4, 8], [2, 4, 6]              // Diagonais
+      ];
+
+      return winningCombinations.some(combination => {
+        const [a, b, c] = combination;
+        return gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c];
+      });
+    }
+
+    function markWinnerCells() {
+      const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Linhas
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Colunas
+        [0, 4, 8], [2, 4, 6]              // Diagonais
+      ];
+
+      winningCombinations.forEach(combination => {
+        const [a, b, c] = combination;
+        const cells = document.querySelectorAll('.cell');
+        cells[a].classList.add('winner');
+        cells[b].classList.add('winner');
+        cells[c].classList.add('winner');
+      });
+    }
+
+    function resetGame() {
+      currentPlayer = playerSelect.value;
+      gameBoard = ['', '', '', '', '', '', '', '', ''];
+      gameActive = true;
+      message.textContent = `É a vez do Jogador ${currentPlayer}`;
+      restartButton.style.display = 'none';
+
+      const cells = document.querySelectorAll('.cell');
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('winner');
+      });
+    }
+
+    initializeBoard();
+  </script>
+   <footer id="footer">
+    <div class="col">   
+        <a href="index.html"><h4>Copyright © 2022-2023 XoXoGames. Todos os direitos reservados.</h4></a>   
+    </div>    
+</footer>
+</body>
+</html>
+
+
